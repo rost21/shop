@@ -54,7 +54,7 @@
         </div>
     </div>
     <!-- Линия -->
-    <hr class="line"/>
+    <div class="top-line"></div>
     <!-- Логотип -->
     <img src="images/logo.png" width="350px"/>
     <!-- Информационный блок -->
@@ -87,5 +87,6 @@
     </ul>
     <p align="right" id="block-basket"><img src="images/basket.png" width="40px"/> <a href="#">Корзина пуста</a></p>
     <!-- Линия -->
-    <hr class="line"/>
+
 </div>
+<div class="line"></div>
