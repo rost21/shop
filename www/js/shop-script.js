@@ -246,5 +246,28 @@ $(document).ready(function () {
         }
     });
 
+    $('#auth-user-info').toggle(
+        function () {
+            $('#block-user').fadeIn(100);
+    },
+        function () {
+            $('#block-user').fadeOut(100);
+        }
+    );
 
+    $('#logout').click(function(){
+
+        $.ajax({
+            type: "POST",
+            url: "include/logout.php",
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+
+                if (data == 'logout') {
+                    location.reload();
+                }
+            }
+        });
+    });
 });
