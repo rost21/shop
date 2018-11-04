@@ -176,6 +176,8 @@
     height: 40px;
     margin-left: 630px;
     margin-top: 25px;
+    z-index: 10;
+    position: absolute;
 }
 
 /* Стили поля ввода текста */
@@ -1135,7 +1137,7 @@
     margin-top: 40px;
     background-color: white;
     position: absolute;
-    z-index: 2;
+    z-index: 20;
     box-shadow: 0 0 15px #DBDBDB;
     -moz-box-shadow: 0 0 15px #DBDBDB;
     -webkit-box-shadow: 0 0 15px #DBDBDB;
@@ -1405,4 +1407,26 @@
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
+}
+
+#result-search {
+    width: 318px;
+    height: auto;
+    background-color: white;
+    border-left: 1px solid #E1E1E2;
+    border-right: 1px solid #E1E1E2;
+    border-bottom: 1px solid #E1E1E2;
+    display: none;
+}
+
+#result-search a{
+    font: 15px sans-serif;
+    text-decoration: none;
+    padding: 5px;
+    display: block;
+    color: black;
+}
+
+#result-search a:hover{
+    background-color: #F1F2F2;
 }

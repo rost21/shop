@@ -1,3 +1,10 @@
+<?php
+if (isset($_GET['q'])) {
+    $search = $_GET['q'];
+} else {
+    $search = "";
+}
+?>
 <!-- Основной верхний блок -->
 <div id="block-header">
     <!-- Верхний блок с навигацией -->
@@ -83,18 +90,22 @@
     <!-- Поиск товаров -->
     <div id="block-search">
         <form method="get" action="search.php?q=">
-            <input type="text" id="input-search" name="q" placeholder="Введите что-то для поиска" required>
+            <input type="text" id="input-search" name="q" placeholder="Введите поисковое значение" value="<?php echo $search;?>" required>
             <input type="submit" id="button-search" value="Поиск">
         </form>
+
+        <ul id="result-search">
+
+        </ul>
     </div>
 </div>
 <!-- Средний блок -->
 <div id="top-menu">
     <ul>
         <li><img src="images/home.png" width="40px"/><a href="index.php">Главная</a> </li>
-        <li><img src="images/new2.png" width="50px"/><a href="#">Новинки</a></li>
-        <li><img src="images/best price.png" width="50px"/><a href="#">Лидеры продаж</a></li>
-        <li><img src="images/sale.png" width="50px"/><a href="#">Распродажа</a></li>
+        <li><img src="images/new2.png" width="50px"/><a href="view_aystopper.php?go=news">Новинки</a></li>
+        <li><img src="images/best price.png" width="50px"/><a href="view_aystopper.php?go=leaders">Лидеры продаж</a></li>
+        <li><img src="images/sale.png" width="50px"/><a href="view_aystopper.php?go=sale">Распродажа</a></li>
     </ul>
     <p align="right" id="block-basket"><img src="images/basket.png" width="40px"/> <a href="#">Корзина пуста</a></p>
     <!-- Линия -->

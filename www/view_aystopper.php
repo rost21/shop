@@ -6,6 +6,29 @@ include("include/auth_cookie.php");
 include("include/db_connect.php");
 
 mysqli_set_charset($link, "UTF8");
+
+if (isset($_GET['go'])) {
+    $go = clear_string($_GET['go']);
+
+    switch ($go) {
+        case "news":
+            $query_aystopper = "WHERE visible = '1' AND new = '1'";
+            $name_aystopper = "Новинки товаров";
+            break;
+        case "leaders":
+            $query_aystopper = "WHERE visible = '1' AND leader = '1'";
+            $name_aystopper = "Лидеры продаж";
+            break;
+        case "sale":
+            $query_aystopper = "WHERE visible = '1' AND sale = '1'";
+            $name_aystopper = "Распродажа товаров";
+            break;
+        default:
+            $query_aystopper = "";
+            break;
+    }
+}
+
 if (isset($_GET['sort'])) {
     $sorting = $_GET['sort'];
 
@@ -72,36 +95,17 @@ if (isset($_GET['sort'])) {
         ?>
     </div>
     <div id="block-content">
-        <div id="block-sorting">
-            <p id="nav-breadcrumbs"><a href="index.php">Главная страница</a> \ <span>Все товары</span></p>
-            <ul id="option-list">
-                <li>Вид:</li>
-                <li><img id="style-grid" src="images/grid.png"/></li>
-                <li><img id="style-list" src="images/list.png"/></li>
-                <li>Сортировка:</li>
-                <li><a id="select-sort"><?php echo $sort_name; ?></a>
-                    <ul id="sorting-list">
-                        <li><a href="index.php?sort=low-to-high">От дешевых к дорогим</a></li>
-                        <li><a href="index.php?sort=high-to-low">От дорогих к дешевых</a></li>
-                        <li><a href="index.php?sort=popular">Популярное</a></li>
-                        <li><a href="index.php?sort=news">Новинки</a></li>
-                        <li><a href="index.php?sort=brand">От А до Я</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-
-        <ul id="block-tovar-grid">
-            <?php
+        <?php
+            if ($query_aystopper != ""){
 
             $num = 4; //Количество выводимых товаров
-            if (isset($_GET['page'])){
+            if (isset($_GET['page'])) {
                 $page = (int)($_GET['page']);
             } else {
-                $page =1;
+                $page = 1;
             }
 
-            $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE visible='1'");
+            $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products $query_aystopper");
             $temp = mysqli_fetch_array($count);
 
             if ($temp[0] > 0) {
@@ -122,8 +126,35 @@ if (isset($_GET['sort'])) {
                 $query_start_num = "LIMIT $start, $num";
             }
 
+            if ($temp[0] > 0) {
 
-            $result = mysqli_query($link, "SELECT * FROM table_products  WHERE visible='1' ORDER BY $sortingType $query_start_num");
+                ?>
+
+
+            <div id="block-sorting">
+                <p id="nav-breadcrumbs"><a href="index.php">Главная страница</a> \ <span><?php echo $name_aystopper;?></span></p>
+                <ul id="option-list">
+                    <li>Вид:</li>
+                    <li><img id="style-grid" src="images/grid.png"/></li>
+                    <li><img id="style-list" src="images/list.png"/></li>
+                    <li>Сортировка:</li>
+                    <li><a id="select-sort"><?php echo $sort_name; ?></a>
+                        <ul id="sorting-list">
+                            <li><a href="view_aystopper.php?go=<?php echo $go; ?>&sort=low-to-high">От дешевых к дорогим</a></li>
+                            <li><a href="view_aystopper.php?go=<?php echo $go; ?>&sort=high-to-low">От дорогих к дешевых</a></li>
+                            <li><a href="view_aystopper.php?go=<?php echo $go; ?>&sort=popular">Популярное</a></li>
+                            <li><a href="view_aystopper.php?go=<?php echo $go; ?>&sort=news">Новинки</a></li>
+                            <li><a href="view_aystopper.php?go=<?php echo $go; ?>&sort=brand">От А до Я</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <ul id="block-tovar-grid">
+
+            <?php
+
+            $result = mysqli_query($link, "SELECT * FROM table_products $query_aystopper ORDER BY $sortingType $query_start_num");
             if (mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_array($result);
                 do {
@@ -167,7 +198,7 @@ if (isset($_GET['sort'])) {
         </ul>
         <ul id="block-tovar-list">
             <?php
-            $result = mysqli_query($link, "SELECT * FROM table_products  WHERE visible='1' ORDER BY $sortingType $query_start_num");
+            $result = mysqli_query($link, "SELECT * FROM table_products $query_aystopper ORDER BY $sortingType $query_start_num");
             if (mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_array($result);
                 do {
@@ -211,29 +242,36 @@ if (isset($_GET['sort'])) {
                 } while ($row = mysqli_fetch_array($result));
             }
             echo '</ul>';
+            } else {
+                echo "<p>Товаров нет!</p>";
+                $total =0;
+            }
 
+            } else {
+                echo "<p>Данная категория не найдена!</p>";
+            }
             global $pstr_prev, $pstr_next, $page1left, $page2left, $page3left, $page4left, $page5left,
                    $page1right, $page2right, $page3right, $page4right, $page5right;
 
-            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">&lt;</a></li>';
-            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">&gt;</a></li>';
+            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 1) . '">&lt;</a></li>';
+            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 1) . '">&gt;</a></li>';
 
             // Формируем ссылки со страницами
-            if ($page - 5 > 0) $page5left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
-            if ($page - 4 > 0) $page4left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
-            if ($page - 3 > 0) $page3left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
-            if ($page - 2 > 0) $page2left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
-            if ($page - 1 > 0) $page1left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
+            if ($page - 5 > 0) $page5left = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
+            if ($page - 4 > 0) $page4left = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
+            if ($page - 3 > 0) $page3left = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
+            if ($page - 2 > 0) $page2left = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
+            if ($page - 1 > 0) $page1left = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
 
-            if ($page + 5 <= $total) $page5right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
-            if ($page + 4 <= $total) $page4right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
-            if ($page + 3 <= $total) $page3right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
-            if ($page + 2 <= $total) $page2right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
-            if ($page + 1 <= $total) $page1right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
+            if ($page + 5 <= $total) $page5right = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
+            if ($page + 4 <= $total) $page4right = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
+            if ($page + 3 <= $total) $page3right = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
+            if ($page + 2 <= $total) $page2right = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
+            if ($page + 1 <= $total) $page1right = '<li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
 
 
             if ($page + 5 < $total) {
-                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="index.php?sort='.$sorting.'&page=' . $total . '">' . $total . '</a></li>';
+                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="view_aystopper.php?go='.$go.'&sort=' . $sorting . '&page=' . $total . '">' . $total . '</a></li>';
             } else {
                 $strtotal = "";
             }
@@ -242,11 +280,11 @@ if (isset($_GET['sort'])) {
             if ($total > 1) {
                 echo '<div class="pstrnav"><ul>';
                 echo $pstr_prev . $page5left . $page4left . $page3left . $page2left . $page1left . "
-                <li><a class='pstr-active' href='index.php?sort=".$sorting."&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
+                <li><a class='pstr-active' href='view_aystopper.php?go='.$go.'&sort=" . $sorting . "&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
                 echo '</ul></div>';
             }
 
-            ?>
+        ?>
 
     </div>
 

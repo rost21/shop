@@ -5,7 +5,10 @@ include("functions/functions.php");
 include("include/auth_cookie.php");
 include("include/db_connect.php");
 
+$search = clear_string($_GET["q"]);
+
 mysqli_set_charset($link, "UTF8");
+
 if (isset($_GET['sort'])) {
     $sorting = $_GET['sort'];
 
@@ -56,7 +59,7 @@ if (isset($_GET['sort'])) {
     <script type="text/javascript" src="js/jquery.cookie-1.4.1.min.js"></script>
     <script type="text/javascript" src="trackbar/jquery.trackbar.js"></script>
     <script type="text/javascript" src="js/TextChange.js"></script>
-    <title>Интернет магазин</title>
+    <title>Поиск - <?php echo $search;?></title>
 </head>
 <body>
 <div id="block-body">
@@ -72,36 +75,18 @@ if (isset($_GET['sort'])) {
         ?>
     </div>
     <div id="block-content">
-        <div id="block-sorting">
-            <p id="nav-breadcrumbs"><a href="index.php">Главная страница</a> \ <span>Все товары</span></p>
-            <ul id="option-list">
-                <li>Вид:</li>
-                <li><img id="style-grid" src="images/grid.png"/></li>
-                <li><img id="style-list" src="images/list.png"/></li>
-                <li>Сортировка:</li>
-                <li><a id="select-sort"><?php echo $sort_name; ?></a>
-                    <ul id="sorting-list">
-                        <li><a href="index.php?sort=low-to-high">От дешевых к дорогим</a></li>
-                        <li><a href="index.php?sort=high-to-low">От дорогих к дешевых</a></li>
-                        <li><a href="index.php?sort=popular">Популярное</a></li>
-                        <li><a href="index.php?sort=news">Новинки</a></li>
-                        <li><a href="index.php?sort=brand">От А до Я</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
 
-        <ul id="block-tovar-grid">
-            <?php
+        <?php
+            if (strlen($search) >= 3 && strlen($search) < 60){
 
             $num = 4; //Количество выводимых товаров
-            if (isset($_GET['page'])){
+            if (isset($_GET['page'])) {
                 $page = (int)($_GET['page']);
             } else {
-                $page =1;
+                $page = 1;
             }
 
-            $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE visible='1'");
+            $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE title LIKE '%$search%' AND visible='1'");
             $temp = mysqli_fetch_array($count);
 
             if ($temp[0] > 0) {
@@ -122,8 +107,31 @@ if (isset($_GET['sort'])) {
                 $query_start_num = "LIMIT $start, $num";
             }
 
+            if ($temp[0]>0){
 
-            $result = mysqli_query($link, "SELECT * FROM table_products  WHERE visible='1' ORDER BY $sortingType $query_start_num");
+                echo '
+            <div id="block-sorting">
+                <p id="nav-breadcrumbs"><a href="index.php">Главная страница</a> \ <span>Поиск</span></p>
+                <ul id="option-list">
+                    <li>Вид:</li>
+                    <li><img id="style-grid" src="images/grid.png"/></li>
+                    <li><img id="style-list" src="images/list.png"/></li>
+                    <li>Сортировка:</li>
+                    <li><a id="select-sort">'.$sort_name.'</a>
+                        <ul id="sorting-list">
+                            <li><a href="search.php?q='.$search.'&sort=low-to-high">От дешевых к дорогим</a></li>
+                            <li><a href="search.php?q='.$search.'&sort=high-to-low">От дорогих к дешевых</a></li>
+                            <li><a href="search.php?q='.$search.'&sort=popular">Популярное</a></li>
+                            <li><a href="search.php?q='.$search.'&sort=news">Новинки</a></li>
+                            <li><a href="search.php?q='.$search.'&sort=brand">От А до Я</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <ul id="block-tovar-grid">
+            ';
+
+            $result = mysqli_query($link, "SELECT * FROM table_products WHERE title LIKE '%$search%' AND visible='1' ORDER BY $sortingType $query_start_num");
             if (mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_array($result);
                 do {
@@ -167,7 +175,7 @@ if (isset($_GET['sort'])) {
         </ul>
         <ul id="block-tovar-list">
             <?php
-            $result = mysqli_query($link, "SELECT * FROM table_products  WHERE visible='1' ORDER BY $sortingType $query_start_num");
+            $result = mysqli_query($link, "SELECT * FROM table_products WHERE title LIKE '%$search%' AND visible='1' ORDER BY $sortingType $query_start_num");
             if (mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_array($result);
                 do {
@@ -215,25 +223,25 @@ if (isset($_GET['sort'])) {
             global $pstr_prev, $pstr_next, $page1left, $page2left, $page3left, $page4left, $page5left,
                    $page1right, $page2right, $page3right, $page4right, $page5right;
 
-            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">&lt;</a></li>';
-            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">&gt;</a></li>';
+            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="search.php?q=' . $search . '&page=' . ($page - 1) . '">&lt;</a></li>';
+            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="search.php?q=' . $search . '&page=' . ($page + 1) . '">&gt;</a></li>';
 
             // Формируем ссылки со страницами
-            if ($page - 5 > 0) $page5left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
-            if ($page - 4 > 0) $page4left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
-            if ($page - 3 > 0) $page3left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
-            if ($page - 2 > 0) $page2left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
-            if ($page - 1 > 0) $page1left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
+            if ($page - 5 > 0) $page5left = '<li><a href="search.php?q=' . $search . '&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
+            if ($page - 4 > 0) $page4left = '<li><a href="search.php?q=' . $search . '&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
+            if ($page - 3 > 0) $page3left = '<li><a href="search.php?q=' . $search . '&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
+            if ($page - 2 > 0) $page2left = '<li><a href="search.php?q=' . $search . '&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
+            if ($page - 1 > 0) $page1left = '<li><a href="search.php?q=' . $search . '&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
 
-            if ($page + 5 <= $total) $page5right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
-            if ($page + 4 <= $total) $page4right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
-            if ($page + 3 <= $total) $page3right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
-            if ($page + 2 <= $total) $page2right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
-            if ($page + 1 <= $total) $page1right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
+            if ($page + 5 <= $total) $page5right = '<li><a href="search.php?q=' . $search . '&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
+            if ($page + 4 <= $total) $page4right = '<li><a href="search.php?q=' . $search . '&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
+            if ($page + 3 <= $total) $page3right = '<li><a href="search.php?q=' . $search . '&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
+            if ($page + 2 <= $total) $page2right = '<li><a href="search.php?q=' . $search . '&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
+            if ($page + 1 <= $total) $page1right = '<li><a href="search.php?q=' . $search . '&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
 
 
             if ($page + 5 < $total) {
-                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="index.php?sort='.$sorting.'&page=' . $total . '">' . $total . '</a></li>';
+                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="search.php?q=' . $search . '&page=' . $total . '">' . $total . '</a></li>';
             } else {
                 $strtotal = "";
             }
@@ -242,10 +250,15 @@ if (isset($_GET['sort'])) {
             if ($total > 1) {
                 echo '<div class="pstrnav"><ul>';
                 echo $pstr_prev . $page5left . $page4left . $page3left . $page2left . $page1left . "
-                <li><a class='pstr-active' href='index.php?sort=".$sorting."&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
+                <li><a class='pstr-active' href='search.php?q=" . $search . "&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
                 echo '</ul></div>';
             }
-
+            } else {
+                echo "<p><center><b>Ничего не найдено</b></center></p>";
+            }
+            } else {
+                echo "<p><center>Поисковое значение должно быть от 3 до 60 символов!</center></p>";
+            }
             ?>
 
     </div>

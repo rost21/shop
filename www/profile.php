@@ -114,6 +114,7 @@ mysqli_set_charset($link, "UTF8");
     <script type="text/javascript" src="js/shop-script.js"></script>
     <script type="text/javascript" src="js/jquery.cookie-1.4.1.min.js"></script>
     <script type="text/javascript" src="trackbar/jquery.trackbar.js"></script>
+    <script type="text/javascript" src="js/TextChange.js"></script>
     <title>Интернет магазин</title>
 </head>
 <body>

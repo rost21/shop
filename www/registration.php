@@ -19,6 +19,7 @@ include ("include/auth_cookie.php");
     <script type="text/javascript" src="trackbar/jquery.trackbar.js"></script>
     <script type="text/javascript" src="js/jquery.form.js"></script>
     <script type="text/javascript" src="js/jquery.validate.js"></script>
+    <script type="text/javascript" src="js/TextChange.js"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <script type="text/javascript">
