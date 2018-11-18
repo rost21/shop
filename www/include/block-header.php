@@ -107,8 +107,7 @@ if (isset($_GET['q'])) {
         <li><img src="images/best price.png" width="50px"/><a href="view_aystopper.php?go=leaders">Лидеры продаж</a></li>
         <li><img src="images/sale.png" width="50px"/><a href="view_aystopper.php?go=sale">Распродажа</a></li>
     </ul>
-    <p align="right" id="block-basket"><img src="images/basket.png" width="40px"/> <a href="#">Корзина пуста</a></p>
-    <!-- Линия -->
-
+    <p align="right" id="block-basket"><img src="images/basket.png" width="40px"/> <a href="cart.php?action=check">Корзина пуста</a></p>
 </div>
+<!-- Линия -->
 <div class="line"></div>

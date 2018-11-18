@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    loadcart();
+
     $("#newsticker").jCarouselLite({
         vertical: true,
         hoverPause: true,
@@ -295,6 +297,213 @@ $(document).ready(function () {
             $("#result-search").hide();
         }
     });
+
+
+    //Шаблон проверки email на правильность
+    function isValidEmailAddress(emailAddress) {
+        var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+        return pattern.test(emailAddress);
+    }
+    // Контактные данные
+    $('#confirm-button-next').click(function(data){
+
+        var order_fio = $("#order_fio").val();
+        var order_email = $("#order_email").val();
+        var order_phone = $("#order_phone").val();
+        var order_address = $("#order_address").val();
+
+        if (!$(".order_delivery").is(":checked")) {
+            $(".label_delivery").css("color","#E07B7B");
+            send_order_delivery = '0';
+
+        } else {
+            $(".label_delivery").css("color","black");
+            send_order_delivery = '1';
+
+            // Проверка ФИО
+            if (order_fio == "" || order_fio.length > 50 )
+            {
+                $("#order_fio").css("borderColor","#FDB6B6");
+                send_order_fio = '0';
+
+            } else {
+                $("#order_fio").css("borderColor","#DBDBDB");
+                send_order_fio = '1';
+            }
+
+            //проверка email
+            if (isValidEmailAddress(order_email) == false) {
+                $("#order_email").css("borderColor","#FDB6B6");
+                send_order_email = '0';
+            } else {
+                $("#order_email").css("borderColor","#DBDBDB");
+                send_order_email = '1';
+            }
+
+            // Проверка телефона
+
+            if (order_phone == "" || order_phone.length > 50) {
+                $("#order_phone").css("borderColor","#FDB6B6");
+                send_order_phone = '0';
+            } else {
+                $("#order_phone").css("borderColor","#DBDBDB");
+                send_order_phone = '1';
+            }
+
+            // Проверка Адресса
+
+            if (order_address == "" || order_address.length > 150) {
+                $("#order_address").css("borderColor","#FDB6B6");
+                send_order_address = '0';
+            } else {
+                $("#order_address").css("borderColor","#DBDBDB");
+                send_order_address = '1';
+            }
+        }
+        // Глобальная проверка
+        if (send_order_delivery == "1" && send_order_fio == "1" && send_order_email == "1" && send_order_phone == "1" && send_order_address == "1") {
+            // Отправляем форму
+            return true;
+        }
+
+        data.preventDefault();
+    });
+
+    $('.add-cart-style-list,.add-cart-style-grid').click(function(){
+
+        var  dbid = $(this).attr("dbid");
+
+        $.ajax({
+            type: "POST",
+            url: "include/add_to_cart.php",
+            data: "id="+dbid,
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                loadcart();
+            }
+        });
+
+    });
+
+    function loadcart(){
+        $.ajax({
+            type: "POST",
+            url: "include/loadcart.php",
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+
+                if (data == "0") {
+                    $("#block-basket > a").html("Корзина пуста");
+                } else {
+                    $("#block-basket > a").html(data);
+                }
+
+            }
+        });
+    }
+
+    $('.count-minus').click(function(){
+
+        var change = $(this).attr("change");
+
+        $.ajax({
+            type: "POST",
+            url: "include/count-minus.php",
+            data: "id="+change,
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                $("#input-id"+change).val(data);
+                loadcart();
+
+                // переменная с ценой продукта
+                var price_product = $("#tovar"+change+" > p").attr("price");
+                // Цену умножаем на колличество
+                result_total = Number(price_product) * Number(data);
+
+                $("#tovar"+change+" > p").html(result_total+" грн");
+                $("#tovar"+change+" > h5 > .span-count").html(data);
+
+                total_price();
+            }
+        });
+
+    });
+
+    $('.count-plus').click(function(){
+
+        var change = $(this).attr("change");
+
+        $.ajax({
+            type: "POST",
+            url: "include/count-plus.php",
+            data: "id="+change,
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                $("#input-id"+change).val(data);
+                loadcart();
+
+                // переменная с ценной продукта
+                var price_product = $("#tovar"+change+" > p").attr("price");
+                // Цену умножаем на колличество
+                result_total = Number(price_product) * Number(data);
+
+                $("#tovar"+change+" > p").html(result_total+" грн");
+                $("#tovar"+change+" > h5 > .span-count").html(data);
+
+                total_price();
+            }
+        });
+
+    });
+
+    $('.count-input').keypress(function(e){
+
+        if(e.keyCode==13){
+
+            var change = $(this).attr("change");
+            var count = $("#input-id"+change).val();
+
+            $.ajax({
+                type: "POST",
+                url: "include/count-input.php",
+                data: "id="+change+"&count="+count,
+                dataType: "html",
+                cache: false,
+                success: function(data) {
+                    $("#input-id"+change).val(data);
+                    loadcart();
+
+                    // переменная с ценной продукта
+                    var price_product = $("#tovar"+change+" > p").attr("price");
+                    // Цену умножаем на колличество
+                    result_total = Number(price_product) * Number(data);
+
+                    $("#tovar"+change+" > p").html(result_total+" грн");
+                    $("#tovar"+change+" > h5 > .span-count").html(data);
+                    total_price();
+
+                }
+            });
+        }
+    });
+
+    function total_price(){
+
+        $.ajax({
+            type: "POST",
+            url: "include/total_price.php",
+            dataType: "html",
+            cache: false,
+            success: function(data) {
+                $(".total-price > strong").html(data);
+            }
+        });
+    }
+
 
 
 });

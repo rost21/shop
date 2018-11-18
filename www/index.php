@@ -153,7 +153,7 @@ if (isset($_GET['sort'])) {
                                 <li><img src="images/eye_icon.png"/><p>0</p></li>
                                 <li><img src="images/coments_icon.png"/><p>0</p></li>
                             </ul>
-                            <a class="add-cart-style-grid">Купить</a>
+                            <a class="add-cart-style-grid" dbid="'.$row["product_id"].'">Купить</a>
                             <p class="style-price-grid"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="mini-features">
                                 ' . $row["mini_features"] . '
@@ -200,7 +200,7 @@ if (isset($_GET['sort'])) {
                             
                             <p class="style-title-list"><a href="#">' . $row["title"] . '</a></p>
                             
-                            <a class="add-cart-style-list">Купить</a>
+                            <a class="add-cart-style-list" dbid="'.$row["product_id"].'">Купить</a>
                             <p class="style-price-list"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="style-text-list">
                                 ' . $row["mini_description"] . '
