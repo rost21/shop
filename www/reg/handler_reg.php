@@ -1,57 +1,56 @@
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <?php
-
+define('myshop', true);
 //require_once "../recaptchalib.php";
-if($_SERVER["REQUEST_METHOD"] == "POST")
-{
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     session_start();
     include("../include/db_connect.php");
     include("../functions/functions.php");
 
-    if (isset($_POST['reg_login'])){
-        $login = iconv("UTF-8", "cp1251",strtolower(clear_string($_POST['reg_login'])));
+    if (isset($_POST['reg_login'])) {
+        $login = iconv("UTF-8", "cp1251", strtolower(clear_string($_POST['reg_login'])));
     } else {
         $login = "1";
     }
 
-    if (isset($_POST['reg_password'])){
-        $password = iconv("UTF-8", "cp1251",strtolower(clear_string($_POST['reg_password'])));
+    if (isset($_POST['reg_password'])) {
+        $password = iconv("UTF-8", "cp1251", strtolower(clear_string($_POST['reg_password'])));
     } else {
         $password = "1";
     }
 
-    if (isset($_POST['reg_surname'])){
+    if (isset($_POST['reg_surname'])) {
         $surname = clear_string($_POST['reg_surname']);
     } else {
         $surname = "1";
     }
 
-    if (isset($_POST['reg_name'])){
+    if (isset($_POST['reg_name'])) {
         $name = clear_string($_POST['reg_name']);
     } else {
         $name = "1";
     }
 
-    if (isset($_POST['reg_patronymic'])){
+    if (isset($_POST['reg_patronymic'])) {
         $patronymic = clear_string($_POST['reg_patronymic']);
     } else {
         $patronymic = "1";
     }
 
-    if (isset($_POST['reg_email'])){
-        $email = iconv("UTF-8", "cp1251",clear_string($_POST['reg_email']));
+    if (isset($_POST['reg_email'])) {
+        $email = iconv("UTF-8", "cp1251", clear_string($_POST['reg_email']));
     } else {
         $email = "1";
     }
 
-    if (isset($_POST['reg_phone'])){
-        $phone = iconv("UTF-8", "cp1251",clear_string($_POST['reg_phone']));
+    if (isset($_POST['reg_phone'])) {
+        $phone = iconv("UTF-8", "cp1251", clear_string($_POST['reg_phone']));
     } else {
         $phone = "1";
     }
 
-    if (isset($_POST['reg_address'])){
-        $address = iconv("UTF-8", "cp1251",clear_string($_POST['reg_address']));
+    if (isset($_POST['reg_address'])) {
+        $address = iconv("UTF-8", "cp1251", clear_string($_POST['reg_address']));
     } else {
         $address = "1";
     }
@@ -62,15 +61,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
     //mysqli_query($link,"SET SESSION collation_connection = 'utf8_general_ci'");
     //mysqli_set_charset($link,'utf-8');﻿
 
-    if (strlen($login) < 5 or strlen($login) > 15)
-    {
+    if (strlen($login) < 5 or strlen($login) > 15) {
         $error[] = "Логин должен быть от 5 до 15 символов!";
-    }
-    else
-    {
-        $result = mysqli_query($link,"SELECT login FROM reg_user WHERE login = '$login'");
-        if (mysqli_num_rows($result) > 0)
-        {
+    } else {
+        $result = mysqli_query($link, "SELECT login FROM reg_user WHERE login = '$login'");
+        if (mysqli_num_rows($result) > 0) {
             $error[] = "Логин занят!";
         }
 
@@ -80,7 +75,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
     if (strlen($surname) < 3 or strlen($surname) > 20) $error[] = "Укажите Фамилию от 3 до 20 символов!";
     if (strlen($name) < 3 or strlen($name) > 15) $error[] = "Укажите Имя от 3 до 15 символов!";
     if (strlen($patronymic) < 3 or strlen($patronymic) > 25) $error[] = "Укажите Отчество от 3 до 25 символов!";
-    if (!preg_match("/^(?:[a-z0-9]+(?:[-_.]?[a-z0-9]+)?@[a-z0-9_.-]+(?:\.?[a-z0-9]+)?\.[a-z]{2,5})$/i",trim($email))) $error[] = "Укажите корректный email!";
+    if (!preg_match("/^(?:[a-z0-9]+(?:[-_.]?[a-z0-9]+)?@[a-z0-9_.-]+(?:\.?[a-z0-9]+)?\.[a-z]{2,5})$/i", trim($email))) $error[] = "Укажите корректный email!";
     if (!$phone) $error[] = "Укажите номер телефона!";
     if (!$address) $error[] = "Необходимо указать адрес доставки!";
 
@@ -112,30 +107,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
 
     }
     */
-    if (count($error))
-    {
-        echo implode('<br />',$error);
+    if (count($error)) {
+        echo implode('<br />', $error);
 
-    }else {
+    } else {
         $password = md5($password);
         $password = strrev($password);
-        $password = "9nm2rv8q".$password."2yo6z";
+        $password = "9nm2rv8q" . $password . "2yo6z";
 
         $ip = $_SERVER['REMOTE_ADDR'];
 
-        mysqli_query($link,"INSERT INTO reg_user(login,password,surname,name,patronymic,email,phone,address,datetime,ip)
+        mysqli_query($link, "INSERT INTO reg_user(login,password,surname,name,patronymic,email,phone,address,datetime,ip)
                         VALUES(
                          
-                            '".$login."',
-                            '".$password."',
-                            '".$surname."',
-                            '".$name."',
-                            '".$patronymic."',
-                            '".$email."',
-                            '".$phone."',
-                            '".$address."',
+                            '" . $login . "',
+                            '" . $password . "',
+                            '" . $surname . "',
+                            '" . $name . "',
+                            '" . $patronymic . "',
+                            '" . $email . "',
+                            '" . $phone . "',
+                            '" . $address . "',
                             NOW(),
-                            '".$ip."'                          
+                            '" . $ip . "'                          
                         )");
         echo true;
     }

@@ -1,3 +1,6 @@
+<?php
+defined('myshop') or die('Доступ запрещен!');
+?>
 <div id="block-footer">
     <!-- Линия -->
     <hr class="line"/>

@@ -2,7 +2,7 @@
 
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
-    //define('myeshop', true);
+    define('myshop', true);
     include('db_connect.php');
     include('../functions/functions.php');
 

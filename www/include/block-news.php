@@ -1,3 +1,7 @@
+<?php
+defined('myshop') or die('Доступ запрещен!');
+?>
+
 <div id="block-news">
     <center><img id="news-prev" src="images/up.png" width="15px"/></center>
     <div id="newsticker">

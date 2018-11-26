@@ -1,6 +1,6 @@
 <?php
-include('db_connect.php');
-
+defined('myshop') or die('Доступ запрещен!');
+//include('db_connect.php');
 
 if (!isset($_SESSION['auth']) && isset($_COOKIE["rememberMe"])  ) {
     if ($_COOKIE["rememberMe"]) {

@@ -1,4 +1,5 @@
 <?php
+define('myshop', true);
 session_start();
 
 include("functions/functions.php");
@@ -59,7 +60,7 @@ if (isset($_GET['sort'])) {
     <script type="text/javascript" src="js/jquery.cookie-1.4.1.min.js"></script>
     <script type="text/javascript" src="trackbar/jquery.trackbar.js"></script>
     <script type="text/javascript" src="js/TextChange.js"></script>
-    <title>Поиск - <?php echo $search;?></title>
+    <title>Поиск - <?php echo $search; ?></title>
 </head>
 <body>
 <div id="block-body">
@@ -77,39 +78,39 @@ if (isset($_GET['sort'])) {
     <div id="block-content">
 
         <?php
-            if (strlen($search) >= 3 && strlen($search) < 60){
+        if (strlen($search) >= 3 && strlen($search) < 60){
 
-            $num = 4; //Количество выводимых товаров
-            if (isset($_GET['page'])) {
-                $page = (int)($_GET['page']);
-            } else {
-                $page = 1;
-            }
+        $num = 4; //Количество выводимых товаров
+        if (isset($_GET['page'])) {
+            $page = (int)($_GET['page']);
+        } else {
+            $page = 1;
+        }
 
-            $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE title LIKE '%$search%' AND visible='1'");
-            $temp = mysqli_fetch_array($count);
+        $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE title LIKE '%$search%' AND visible='1'");
+        $temp = mysqli_fetch_array($count);
 
-            if ($temp[0] > 0) {
-                $tempCount = $temp[0];
+        if ($temp[0] > 0) {
+            $tempCount = $temp[0];
 
-                //Общее число страниц
-                $total = intval((($tempCount - 1) / $num) + 1);
-                $total = intval($total);
+            //Общее число страниц
+            $total = intval((($tempCount - 1) / $num) + 1);
+            $total = intval($total);
 
-                $page = intval($page);
+            $page = intval($page);
 
-                if (empty($page) || $page < 0) $page = 1;
+            if (empty($page) || $page < 0) $page = 1;
 
-                if ($page > $total) $page = $total;
+            if ($page > $total) $page = $total;
 
-                //С какого номера надо выводить
-                $start = $page * $num - $num;
-                $query_start_num = "LIMIT $start, $num";
-            }
+            //С какого номера надо выводить
+            $start = $page * $num - $num;
+            $query_start_num = "LIMIT $start, $num";
+        }
 
-            if ($temp[0]>0){
+        if ($temp[0] > 0){
 
-                echo '
+        echo '
             <div id="block-sorting">
                 <p id="nav-breadcrumbs"><a href="index.php">Главная страница</a> \ <span>Поиск</span></p>
                 <ul id="option-list">
@@ -117,13 +118,13 @@ if (isset($_GET['sort'])) {
                     <li><img id="style-grid" src="images/grid.png"/></li>
                     <li><img id="style-list" src="images/list.png"/></li>
                     <li>Сортировка:</li>
-                    <li><a id="select-sort">'.$sort_name.'</a>
+                    <li><a id="select-sort">' . $sort_name . '</a>
                         <ul id="sorting-list">
-                            <li><a href="search.php?q='.$search.'&sort=low-to-high">От дешевых к дорогим</a></li>
-                            <li><a href="search.php?q='.$search.'&sort=high-to-low">От дорогих к дешевых</a></li>
-                            <li><a href="search.php?q='.$search.'&sort=popular">Популярное</a></li>
-                            <li><a href="search.php?q='.$search.'&sort=news">Новинки</a></li>
-                            <li><a href="search.php?q='.$search.'&sort=brand">От А до Я</a></li>
+                            <li><a href="search.php?q=' . $search . '&sort=low-to-high">От дешевых к дорогим</a></li>
+                            <li><a href="search.php?q=' . $search . '&sort=high-to-low">От дорогих к дешевых</a></li>
+                            <li><a href="search.php?q=' . $search . '&sort=popular">Популярное</a></li>
+                            <li><a href="search.php?q=' . $search . '&sort=news">Новинки</a></li>
+                            <li><a href="search.php?q=' . $search . '&sort=brand">От А до Я</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -131,37 +132,41 @@ if (isset($_GET['sort'])) {
             <ul id="block-tovar-grid">
             ';
 
-            $result = mysqli_query($link, "SELECT * FROM table_products WHERE title LIKE '%$search%' AND visible='1' ORDER BY $sortingType $query_start_num");
-            if (mysqli_num_rows($result) > 0) {
-                $row = mysqli_fetch_array($result);
-                do {
+        $result = mysqli_query($link, "SELECT * FROM table_products WHERE title LIKE '%$search%' AND visible='1' ORDER BY $sortingType $query_start_num");
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_array($result);
+            do {
 
-                    if ($row["image"] != "" && file_exists("./uploads/" . $row["image"])) {
-                        $img_path = './uploads/' . $row["image"];
-                        $max_width = 150;
-                        $max_height = 150;
-                        list($width, $height) = getimagesize($img_path);
-                        $ratioh = $max_height / $height;
-                        $ratiow = $max_width / $width;
-                        $ratio = min($ratioh, $ratiow);
-                        $width = intval($ratio * $width);
-                        $height = intval($ratio * $height);
-                    } else {
-                        $img_path = "images/no-image.png";
-                        $width = 150;
-                        $height = 150;
-                    }
-                    echo('
+                if ($row["image"] != "" && file_exists("./uploads/" . $row["image"])) {
+                    $img_path = './uploads/' . $row["image"];
+                    $max_width = 150;
+                    $max_height = 150;
+                    list($width, $height) = getimagesize($img_path);
+                    $ratioh = $max_height / $height;
+                    $ratiow = $max_width / $width;
+                    $ratio = min($ratioh, $ratiow);
+                    $width = intval($ratio * $width);
+                    $height = intval($ratio * $height);
+                } else {
+                    $img_path = "images/no-image.png";
+                    $width = 150;
+                    $height = 150;
+                }
+
+                // Количество отзывов
+                $query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE product_id = '{$row['product_id']}' AND moderate='1'");
+                $count_reviews = mysqli_num_rows($query_reviews);
+                echo('
                         <li>
                             <div class="block-images-grid">
                                 <img src="' . $img_path . '" width="' . $width . '" height="' . $height . '"/>
                             </div>
-                            <p class="style-title-grid"><a href="#">' . $row["title"] . '</a></p>
+                            <p class="style-title-grid"><a href="view_content.php?id=' . $row["product_id"] . '">' . $row["title"] . '</a></p>
                             <ul class="reviews-and-counts-grid">
-                                <li><img src="images/eye_icon.png"/><p>0</p></li>
-                                <li><img src="images/coments_icon.png"/><p>0</p></li>
+                                <li><img src="images/eye_icon.png"/><p>' . $row["count"] . '</p></li>
+                                <li><img src="images/coments_icon.png"/><p>' . $count_reviews . '</p></li>
                             </ul>
-                            <a class="add-cart-style-grid">Купить</a>
+                            <a class="add-cart-style-grid" dbid="' . $row["product_id"] . '">Купить</a>
                             <p class="style-price-grid"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="mini-features">
                                 ' . $row["mini_features"] . '
@@ -169,9 +174,9 @@ if (isset($_GET['sort'])) {
                         </li>
                         
                         ');
-                } while ($row = mysqli_fetch_array($result));
-            }
-            ?>
+            } while ($row = mysqli_fetch_array($result));
+        }
+        ?>
         </ul>
         <ul id="block-tovar-list">
             <?php
@@ -195,6 +200,10 @@ if (isset($_GET['sort'])) {
                         $width = 200;
                         $height = 200;
                     }
+
+                    // Количество отзывов
+                    $query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE product_id = '{$row['product_id']}' AND moderate='1'");
+                    $count_reviews = mysqli_num_rows($query_reviews);
                     echo('
                         <li>
                             <div class="block-images-list">
@@ -202,13 +211,13 @@ if (isset($_GET['sort'])) {
                             </div>
                             
                             <ul class="reviews-and-counts-list">
-                                <li><img src="images/eye_icon.png"/><p>0</p></li>
-                                <li><img src="images/coments_icon.png"/><p>0</p></li>
+                                <li><img src="images/eye_icon.png"/><p>' . $row["count"] . '</p></li>
+                                <li><img src="images/coments_icon.png"/><p>' . $count_reviews . '</p></li>
                             </ul>
                             
-                            <p class="style-title-list"><a href="#">' . $row["title"] . '</a></p>
+                            <p class="style-title-list"><a href="view_content.php?id=' . $row["product_id"] . '">' . $row["title"] . '</a></p>
                             
-                            <a class="add-cart-style-list">Купить</a>
+                            <a class="add-cart-style-list" dbid="' . $row["product_id"] . '">Купить</a>
                             <p class="style-price-list"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="style-text-list">
                                 ' . $row["mini_description"] . '

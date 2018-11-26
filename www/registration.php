@@ -1,8 +1,9 @@
 <?php
+define('myshop', true);
 include "include/db_connect.php";
 include "functions/functions.php";
 session_start();
-include ("include/auth_cookie.php");
+include("include/auth_cookie.php");
 
 ?>
 <!DOCTYPE html>
@@ -23,112 +24,112 @@ include ("include/auth_cookie.php");
     <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#form_reg').validate(
                 {
                     // правила для проверки
-                    rules:{
-                        "reg_login":{
-                            required:true,
-                            minlength:5,
-                            maxlength:15,
+                    rules: {
+                        "reg_login": {
+                            required: true,
+                            minlength: 5,
+                            maxlength: 15,
                             remote: {
                                 type: "post",
                                 url: "reg/check_login.php"
                             }
                         },
-                        "reg_password":{
-                            required:true,
-                            minlength:7,
-                            maxlength:15
+                        "reg_password": {
+                            required: true,
+                            minlength: 7,
+                            maxlength: 15
                         },
-                        "reg_surname":{
-                            required:true,
-                            minlength:3,
-                            maxlength:15
+                        "reg_surname": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 15
                         },
-                        "reg_name":{
-                            required:true,
-                            minlength:3,
-                            maxlength:15
+                        "reg_name": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 15
                         },
-                        "reg_patronymic":{
-                            required:true,
-                            minlength:3,
-                            maxlength:25
+                        "reg_patronymic": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 25
                         },
-                        "reg_email":{
-                            required:true
+                        "reg_email": {
+                            required: true
                             //email:true
                         },
-                        "reg_phone":{
-                            required:true
+                        "reg_phone": {
+                            required: true
                         },
-                        "reg_address":{
-                            required:true
+                        "reg_address": {
+                            required: true
                         }/*,
-                        "reg_captcha":{
-                            required:false,
-                            remote: {
-                                type: "post",
-                                url: "reg/check_captcha.php"
+                         "reg_captcha":{
+                         required:false,
+                         remote: {
+                         type: "post",
+                         url: "reg/check_captcha.php"
 
-                            }
+                         }
 
-                        }*/
+                         }*/
                     },
 
                     // выводимые сообщения при нарушении соответствующих правил
-                    messages:{
-                        "reg_login":{
-                            required:"Укажите Логин!",
-                            minlength:"От 5 до 15 символов!",
-                            maxlength:"От 5 до 15 символов!",
+                    messages: {
+                        "reg_login": {
+                            required: "Укажите Логин!",
+                            minlength: "От 5 до 15 символов!",
+                            maxlength: "От 5 до 15 символов!",
                             remote: "Логин занят!"
                         },
-                        "reg_password":{
-                            required:"Укажите Пароль!",
-                            minlength:"От 7 до 15 символов!",
-                            maxlength:"От 7 до 15 символов!"
+                        "reg_password": {
+                            required: "Укажите Пароль!",
+                            minlength: "От 7 до 15 символов!",
+                            maxlength: "От 7 до 15 символов!"
                         },
-                        "reg_surname":{
-                            required:"Укажите вашу Фамилию!",
-                            minlength:"От 3 до 20 символов!",
-                            maxlength:"От 3 до 20 символов!"
+                        "reg_surname": {
+                            required: "Укажите вашу Фамилию!",
+                            minlength: "От 3 до 20 символов!",
+                            maxlength: "От 3 до 20 символов!"
                         },
-                        "reg_name":{
-                            required:"Укажите ваше Имя!",
-                            minlength:"От 3 до 15 символов!",
-                            maxlength:"От 3 до 15 символов!"
+                        "reg_name": {
+                            required: "Укажите ваше Имя!",
+                            minlength: "От 3 до 15 символов!",
+                            maxlength: "От 3 до 15 символов!"
                         },
-                        "reg_patronymic":{
-                            required:"Укажите ваше Отчество!",
-                            minlength:"От 3 до 25 символов!",
-                            maxlength:"От 3 до 25 символов!"
+                        "reg_patronymic": {
+                            required: "Укажите ваше Отчество!",
+                            minlength: "От 3 до 25 символов!",
+                            maxlength: "От 3 до 25 символов!"
                         },
-                        "reg_email":{
-                            required:"Укажите свой E-mail"
+                        "reg_email": {
+                            required: "Укажите свой E-mail"
                             //email:"Не корректный E-mail"
                         },
-                        "reg_phone":{
-                            required:"Укажите номер телефона!"
+                        "reg_phone": {
+                            required: "Укажите номер телефона!"
                         },
-                        "reg_address":{
-                            required:"Необходимо указать адрес доставки!"
+                        "reg_address": {
+                            required: "Необходимо указать адрес доставки!"
                         }/*,
-                        "reg_captcha":{
-                            required:"Введите код с картинки!",
-                            remote: "Не верный код проверки!"
-                        }*/
+                         "reg_captcha":{
+                         required:"Введите код с картинки!",
+                         remote: "Не верный код проверки!"
+                         }*/
                     },
 
-                    submitHandler: function(form){
+                    submitHandler: function (form) {
                         $(form).ajaxSubmit({
-                            success: function(data) {
+                            success: function (data) {
 
                                 if (data == true) {
 
-                                    $("#block-form-registration").fadeOut(300,function() {
+                                    $("#block-form-registration").fadeOut(300, function () {
 
                                         $("#reg_message").addClass("reg_message_good").fadeIn(400).html("Вы успешно зарегистрированы!");
                                         $("#form-submit").hide();
@@ -225,8 +226,6 @@ include ("include/auth_cookie.php");
             </div>
             <p align="right"><input type="submit" name="reg_submit" id="form-submit" value="Регистрация"/></p>
         </form>
-        <!--js-->
-
     </div>
 
     <?php

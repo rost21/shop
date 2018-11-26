@@ -1,6 +1,6 @@
 <?php
 if($_SERVER["REQUEST_METHOD"] == "POST") {
-    //define('myeshop', true);
+    define('myshop', true);
     include("db_connect.php");
     include("../functions/functions.php");
 
@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_num_rows($result) > 0)
         {
 
-            /*
+
             // Генерация пароля.
             $newpass = fungenpass();
 
@@ -25,6 +25,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             // Обновление пароля на новый.
             $update = mysqli_query($link,"UPDATE reg_user SET password='$password' WHERE email='$email'");
 
+            /*
             // Отправка нового пароля.
             send_mail( 'noreply@shop.ru',
                 $email,

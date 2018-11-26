@@ -1,4 +1,5 @@
 <?php
+define('myshop', true);
 session_start();
 
 include("functions/functions.php");
@@ -95,10 +96,10 @@ if (isset($_GET['sort'])) {
             <?php
 
             $num = 4; //Количество выводимых товаров
-            if (isset($_GET['page'])){
+            if (isset($_GET['page'])) {
                 $page = (int)($_GET['page']);
             } else {
-                $page =1;
+                $page = 1;
             }
 
             $count = mysqli_query($link, "SELECT COUNT(*) FROM table_products WHERE visible='1'");
@@ -143,17 +144,22 @@ if (isset($_GET['sort'])) {
                         $width = 150;
                         $height = 150;
                     }
+
+                    // Количество отзывов
+                    $query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE product_id = '{$row['product_id']}' AND moderate='1'");
+                    $count_reviews = mysqli_num_rows($query_reviews);
+
                     echo('
                         <li>
                             <div class="block-images-grid">
                                 <img src="' . $img_path . '" width="' . $width . '" height="' . $height . '"/>
                             </div>
-                            <p class="style-title-grid"><a href="#">' . $row["title"] . '</a></p>
+                            <p class="style-title-grid"><a href="view_content.php?id=' . $row["product_id"] . '">' . $row["title"] . '</a></p>
                             <ul class="reviews-and-counts-grid">
-                                <li><img src="images/eye_icon.png"/><p>0</p></li>
-                                <li><img src="images/coments_icon.png"/><p>0</p></li>
+                                <li><img src="images/eye_icon.png"/><p>' . $row['count'] . '</p></li>
+                                <li><img src="images/coments_icon.png"/><p>' . $count_reviews . '</p></li>
                             </ul>
-                            <a class="add-cart-style-grid" dbid="'.$row["product_id"].'">Купить</a>
+                            <a class="add-cart-style-grid" dbid="' . $row["product_id"] . '">Купить</a>
                             <p class="style-price-grid"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="mini-features">
                                 ' . $row["mini_features"] . '
@@ -187,6 +193,11 @@ if (isset($_GET['sort'])) {
                         $width = 200;
                         $height = 200;
                     }
+
+                    // Количество отзывов
+                    $query_reviews = mysqli_query($link, "SELECT * FROM table_reviews WHERE product_id = '{$row['product_id']}' AND moderate='1'");
+                    $count_reviews = mysqli_num_rows($query_reviews);
+
                     echo('
                         <li>
                             <div class="block-images-list">
@@ -194,13 +205,13 @@ if (isset($_GET['sort'])) {
                             </div>
                             
                             <ul class="reviews-and-counts-list">
-                                <li><img src="images/eye_icon.png"/><p>0</p></li>
-                                <li><img src="images/coments_icon.png"/><p>0</p></li>
+                                <li><img src="images/eye_icon.png"/><p>' . $row['count'] . '</p></li>
+                                <li><img src="images/coments_icon.png"/><p>' . $count_reviews . '</p></li>
                             </ul>
                             
-                            <p class="style-title-list"><a href="#">' . $row["title"] . '</a></p>
+                            <p class="style-title-list"><a href="view_content.php?id=' . $row["product_id"] . '">' . $row["title"] . '</a></p>
                             
-                            <a class="add-cart-style-list" dbid="'.$row["product_id"].'">Купить</a>
+                            <a class="add-cart-style-list" dbid="' . $row["product_id"] . '">Купить</a>
                             <p class="style-price-list"><b>' . $row["price"] . '</b> грн.</p>
                             <div class="style-text-list">
                                 ' . $row["mini_description"] . '
@@ -215,25 +226,25 @@ if (isset($_GET['sort'])) {
             global $pstr_prev, $pstr_next, $page1left, $page2left, $page3left, $page4left, $page5left,
                    $page1right, $page2right, $page3right, $page4right, $page5right;
 
-            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">&lt;</a></li>';
-            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">&gt;</a></li>';
+            if ($page != 1) $pstr_prev = '<li><a class="pstr-prev" href="index.php?sort=' . $sorting . '&page=' . ($page - 1) . '">&lt;</a></li>';
+            if ($page != $total) $pstr_next = '<li><a class="pstr-next" href="index.php?sort=' . $sorting . '&page=' . ($page + 1) . '">&gt;</a></li>';
 
             // Формируем ссылки со страницами
-            if ($page - 5 > 0) $page5left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
-            if ($page - 4 > 0) $page4left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
-            if ($page - 3 > 0) $page3left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
-            if ($page - 2 > 0) $page2left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
-            if ($page - 1 > 0) $page1left = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
+            if ($page - 5 > 0) $page5left = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page - 5) . '">' . ($page - 5) . '</a></li>';
+            if ($page - 4 > 0) $page4left = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page - 4) . '">' . ($page - 4) . '</a></li>';
+            if ($page - 3 > 0) $page3left = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page - 3) . '">' . ($page - 3) . '</a></li>';
+            if ($page - 2 > 0) $page2left = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page - 2) . '">' . ($page - 2) . '</a></li>';
+            if ($page - 1 > 0) $page1left = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page - 1) . '">' . ($page - 1) . '</a></li>';
 
-            if ($page + 5 <= $total) $page5right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
-            if ($page + 4 <= $total) $page4right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
-            if ($page + 3 <= $total) $page3right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
-            if ($page + 2 <= $total) $page2right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
-            if ($page + 1 <= $total) $page1right = '<li><a href="index.php?sort='.$sorting.'&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
+            if ($page + 5 <= $total) $page5right = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page + 5) . '">' . ($page + 5) . '</a></li>';
+            if ($page + 4 <= $total) $page4right = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page + 4) . '">' . ($page + 4) . '</a></li>';
+            if ($page + 3 <= $total) $page3right = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page + 3) . '">' . ($page + 3) . '</a></li>';
+            if ($page + 2 <= $total) $page2right = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page + 2) . '">' . ($page + 2) . '</a></li>';
+            if ($page + 1 <= $total) $page1right = '<li><a href="index.php?sort=' . $sorting . '&page=' . ($page + 1) . '">' . ($page + 1) . '</a></li>';
 
 
             if ($page + 5 < $total) {
-                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="index.php?sort='.$sorting.'&page=' . $total . '">' . $total . '</a></li>';
+                $strtotal = '<li><p class="nav-point">...</p></li><li><a href="index.php?sort=' . $sorting . '&page=' . $total . '">' . $total . '</a></li>';
             } else {
                 $strtotal = "";
             }
@@ -242,7 +253,7 @@ if (isset($_GET['sort'])) {
             if ($total > 1) {
                 echo '<div class="pstrnav"><ul>';
                 echo $pstr_prev . $page5left . $page4left . $page3left . $page2left . $page1left . "
-                <li><a class='pstr-active' href='index.php?sort=".$sorting."&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
+                <li><a class='pstr-active' href='index.php?sort=" . $sorting . "&page=" . $page . "'>" . $page . "</a></li>" . $page1right . $page2right . $page3right . $page4right . $page5right . $strtotal . $pstr_next;
                 echo '</ul></div>';
             }
 

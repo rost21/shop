@@ -1,3 +1,7 @@
+<?php
+defined('myshop') or die('Доступ запрещен!');
+
+?>
 <div id="block-parameter">
     <p class="header-title">Поиск по параметрам</p>
     <p class="title-filter">Стоимость</p>
@@ -46,6 +50,7 @@
         <p class="title-filter">Производители</p>
         <ul class="checkbox-brand">
             <?php
+            mysqli_set_charset($link, "UTF8");
             $result = mysqli_query($link,"SELECT * FROM category");
             if (mysqli_num_rows($result)>0){
                 $row = mysqli_fetch_array($result);

@@ -1,4 +1,5 @@
 <?php
+defined('myshop') or die('Доступ запрещен!');
 
 function clear_string($string) {
     global $link;

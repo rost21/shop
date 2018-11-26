@@ -1,4 +1,6 @@
 <?php
+defined('myshop') or die('Доступ запрещен!');
+
 if (isset($_GET['q'])) {
     $search = $_GET['q'];
 } else {

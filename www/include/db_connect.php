@@ -1,4 +1,6 @@
 <?php
+defined('myshop') or die('Доступ запрещен!');
+
 $db_host = 'localhost';
 $db_user = 'admin';
 $db_pass = 'admin';
